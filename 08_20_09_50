@@ -1,17 +1,51 @@
-jya03@jya03:~/project/agent_cad_260820 % npm run electron:dev
+거의 다 왔어. 이번 건 라이브러리 문제가 아니라 **Chromium 샌드박스 헬퍼 권한** 문제야. `node_modules` 안의 `chrome-sandbox`는 root 소유 + setuid(4755)여야 하는데, npm이 일반 사용자로 풀어놔서 Electron이 "샌드박스 없이는 안 돌린다"며 중단한 거야.
 
-> cad-ai-studio@0.0.0 electron:dev
-> concurrently "npm run dev" "wait-on http://localhost:5174 && NODE_ENV=development electron ."
+## 방법 A — 권한 고치기 (권장)
 
-[0] 
-[0] > cad-ai-studio@0.0.0 dev
-[0] > vite
-[0] 
-[0] 
-[0]   VITE v5.4.21  ready in 198 ms
-[0] 
-[0]   ➜  Local:   http://localhost:5174/
-[0]   ➜  Network: use --host to expose
-[1] [26160:0820/070243.208497:FATAL:sandbox/linux/suid/client/setuid_sandbox_host.cc:166] The SUID sandbox helper binary was found, but is not configured correctly. Rather than run without sandboxing I'm aborting now. You need to make sure that /home/jya03/project/agent_cad_260820/node_modules/electron/dist/chrome-sandbox is owned by root and has mode 4755.
-[1] /home/jya03/project/agent_cad_260820/node_modules/electron/dist/electron exited with signal SIGTRAP
-[1] wait-on http://localhost:5174 && NODE_ENV=development electron . exited with code 1
+```bash
+sudo chown root:root node_modules/electron/dist/chrome-sandbox && sudo chmod 4755 node_modules/electron/dist/chrome-sandbox
+```
+
+그 다음:
+
+```bash
+npm run electron:dev
+```
+
+`npm install`을 다시 하면 권한이 초기화되니, 그때 이 명령만 한 번 더 돌리면 돼.
+
+## 방법 B — sudo 없이 (샌드박스 끄기)
+
+한 터미널:
+
+```bash
+npm run dev
+```
+
+다른 터미널:
+
+```bash
+NODE_ENV=development ./node_modules/.bin/electron . --no-sandbox
+```
+
+한 줄로 하고 싶으면:
+
+```bash
+./node_modules/.bin/concurrently "npm run dev" "./node_modules/.bin/wait-on http://localhost:5174 && NODE_ENV=development ./node_modules/.bin/electron . --no-sandbox"
+```
+
+`--no-sandbox`는 Chromium의 프로세스 격리를 끄는 거야. 이 앱은 로컬 화면과 Gemini API만 쓰니 개발용으로는 흔히 쓰는 우회지만, 격리가 사라지는 건 사실이라 sudo가 되는 환경이면 A를 쓰는 게 맞아.
+
+## 그래도 창이 안 뜨면
+
+디스플레이 문제야. 확인:
+
+```bash
+echo "DISPLAY=$DISPLAY WAYLAND=$WAYLAND_DISPLAY"
+```
+
+둘 다 비어 있으면 GUI가 없는 환경(WSLg 없는 WSL, 헤드리스 서버)이라 Electron 창 자체가 불가능해. 그 경우는 브라우저로 쓰는 게 맞고, 기능도 파일 자동저장·FreeCAD 열기 두 가지만 빠져:
+
+```
+http://localhost:5174/editor
+```
