@@ -1,3 +1,71 @@
 cd /d "배포폴더\app" && python -m venv .venv && .venv\Scripts\activate.bat && python -m pip install —no-index —find-links "..\wheels" fastapi uvicorn websockets numpy scipy pydantic pydantic-settings httpx faster-whisper
 
 cd /d "배포폴더\app" && .venv\Scripts\activate.bat && python run.py
+
+(.venv) jya03@jya03:~/project/padongi_2026_08_19-main/app % uv run python run.py
+
+서버 시작: http://localhost:8001
+관리자 페이지: http://localhost:8001/admin
+
+INFO:     Started server process [13061]
+INFO:     Waiting for application startup.
+01:39:51 [INFO] kaeri_live.main: KAERI LiveSummary 시작
+01:39:51 [INFO] kaeri_live.main: ────────────────────────────────────────────────────────────
+01:39:51 [INFO] kaeri_live.main: 실행 모드: REAL (실제 모델)
+01:39:51 [INFO] kaeri_live.main: 모드 변경하려면 아래 파일 수정:
+01:39:51 [INFO] kaeri_live.main:   .env       : /home/jya03/project/padongi_2026_08_19-main/app/.env
+01:39:51 [INFO] kaeri_live.main:   기본값 정의 : /home/jya03/project/padongi_2026_08_19-main/app/src/kaeri_live/shared/config.py
+01:39:51 [INFO] kaeri_live.main: ────────────────────────────────────────────────────────────
+01:39:51 [ERROR] kaeri_live.adapters.stt.whisper: Whisper preload 실패: No module named 'mlx_whisper'
+Traceback (most recent call last):
+  File "/home/jya03/project/padongi_2026_08_19-main/app/src/kaeri_live/adapters/stt/whisper.py", line 31, in preload
+    await self.transcribe(dummy, language="ko")
+  File "/home/jya03/project/padongi_2026_08_19-main/app/src/kaeri_live/adapters/stt/whisper.py", line 40, in transcribe
+    return await asyncio.to_thread(self._transcribe_sync, audio, language)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jya03/project/padongi_2026_08_19-main/app/src/kaeri_live/adapters/stt/whisper.py", line 44, in _transcribe_sync
+    import mlx_whisper
+ModuleNotFoundError: No module named 'mlx_whisper'
+01:39:51 [WARNING] kaeri_live.main: STT 어댑터 preload 실패 (계속 진행): No module named 'mlx_whisper'
+01:39:51 [ERROR] kaeri_live.adapters.llm.kaeri_gpt: KaeriGPT 로드 실패: No module named 'mlx_lm'
+Traceback (most recent call last):
+  File "/home/jya03/project/padongi_2026_08_19-main/app/src/kaeri_live/adapters/llm/kaeri_gpt.py", line 38, in preload
+    self.model, self.tokenizer = await asyncio.to_thread(_load_sync)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jya03/project/padongi_2026_08_19-main/app/src/kaeri_live/adapters/llm/kaeri_gpt.py", line 34, in _load_sync
+    from mlx_lm import load
+ModuleNotFoundError: No module named 'mlx_lm'
+01:39:51 [WARNING] kaeri_live.main: LLM 어댑터 preload 실패 (계속 진행): KaeriGPT 로드 실패: No module named 'mlx_lm'
+01:39:51 [WARNING] kaeri_live.main: TTS 어댑터 preload 실패 (계속 진행): tts_engine 모듈 import 실패: No module named 'tts_engine'
+01:39:51 [ERROR] kaeri_live.adapters.wakeword.exaone: EXAONE 로드 실패: No module named 'mlx_lm'
+Traceback (most recent call last):
+  File "/home/jya03/project/padongi_2026_08_19-main/app/src/kaeri_live/adapters/wakeword/exaone.py", line 70, in preload
+    self.model, self.tokenizer = await asyncio.to_thread(_load_sync)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jya03/project/padongi_2026_08_19-main/app/src/kaeri_live/adapters/wakeword/exaone.py", line 61, in _load_sync
+    from mlx_lm import load
+ModuleNotFoundError: No module named 'mlx_lm'
+01:39:51 [WARNING] kaeri_live.main: Wakeword 어댑터 preload 실패 (계속 진행): EXAONE 로드 실패: No module named 'mlx_lm'
+01:39:51 [WARNING] kaeri_live.tts.service: Greeting preload 실패 (ko): tts_engine 모듈 import 실패: No module named 'tts_engine'
+01:39:51 [WARNING] kaeri_live.tts.service: Greeting preload 실패 (en): tts_engine 모듈 import 실패: No module named 'tts_engine'
+01:39:51 [INFO] kaeri_live.main: KAERI LiveSummary 부팅 완료 (port=8001)
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
