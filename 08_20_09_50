@@ -1,7 +1,79 @@
-jya03@jya03:~/project/padongi_08_20-main % sudo apt install -y python3 python3-venv sshpass
-sudo: unable to resolve host jya03: Temporary failure in name resolution
-Reading package lists... Done
-Building dependency tree... Done
-Reading state information... Done
-E: Unable to locate package sshpass
-jya03@jya03:~/project/padongi_08_20-main % 
+ya03@jya03:~/project/padongi_08_20-main % bash 실행.sh                                    
+파동이 서버 시작... (모델 로딩 수십 초, 종료: Ctrl+C)
+  청중 화면 : http://localhost:8002/
+  관리자    : http://localhost:8002/admin
+
+
+서버 시작: http://localhost:8001
+관리자 페이지: http://localhost:8001/admin
+
+INFO:     Started server process [15969]
+INFO:     Waiting for application startup.
+02:44:14 [INFO] kaeri_live.main: KAERI LiveSummary 시작
+02:44:14 [INFO] kaeri_live.main: ────────────────────────────────────────────────────────────
+02:44:14 [INFO] kaeri_live.main: 실행 모드: REAL (실제 모델)
+02:44:14 [INFO] kaeri_live.main: 모드 변경하려면 아래 파일 수정:
+02:44:14 [INFO] kaeri_live.main:   .env       : /home/jya03/project/padongi_08_20-main/padongi/.env
+02:44:14 [INFO] kaeri_live.main:   기본값 정의 : /home/jya03/project/padongi_08_20-main/padongi/src/kaeri_live/shared/config.py
+02:44:14 [INFO] kaeri_live.main: ────────────────────────────────────────────────────────────
+02:44:14 [ERROR] kaeri_live.adapters.stt.whisper: Whisper preload 실패: No module named 'mlx_whisper'
+Traceback (most recent call last):
+  File "/home/jya03/project/padongi_08_20-main/padongi/src/kaeri_live/adapters/stt/whisper.py", line 31, in preload
+    await self.transcribe(dummy, language="ko")
+  File "/home/jya03/project/padongi_08_20-main/padongi/src/kaeri_live/adapters/stt/whisper.py", line 40, in transcribe
+    return await asyncio.to_thread(self._transcribe_sync, audio, language)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jya03/project/padongi_08_20-main/padongi/src/kaeri_live/adapters/stt/whisper.py", line 44, in _transcribe_sync
+    import mlx_whisper
+ModuleNotFoundError: No module named 'mlx_whisper'
+02:44:14 [WARNING] kaeri_live.main: STT 어댑터 preload 실패 (계속 진행): No module named 'mlx_whisper'
+02:44:14 [ERROR] kaeri_live.adapters.llm.kaeri_gpt: KaeriGPT 로드 실패: No module named 'mlx_lm'
+Traceback (most recent call last):
+  File "/home/jya03/project/padongi_08_20-main/padongi/src/kaeri_live/adapters/llm/kaeri_gpt.py", line 38, in preload
+    self.model, self.tokenizer = await asyncio.to_thread(_load_sync)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jya03/project/padongi_08_20-main/padongi/src/kaeri_live/adapters/llm/kaeri_gpt.py", line 34, in _load_sync
+    from mlx_lm import load
+ModuleNotFoundError: No module named 'mlx_lm'
+02:44:14 [WARNING] kaeri_live.main: LLM 어댑터 preload 실패 (계속 진행): KaeriGPT 로드 실패: No module named 'mlx_lm'
+Using GPU (CUDA) for inference (CUDA -> CPU fallback enabled)
+/home/jya03/project/padongi_08_20-main/.venv-linux/lib/python3.12/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py:153: UserWarning: Specified provider 'CUDAExecutionProvider' is not in available provider names.Available providers: 'AzureExecutionProvider, CPUExecutionProvider'
+  warnings.warn(
+[ONNX] duration_predictor.onnx providers → ['CPUExecutionProvider']
+[ONNX] text_encoder.onnx providers → ['CPUExecutionProvider']
+[ONNX] vector_estimator.onnx providers → ['CPUExecutionProvider']
+[ONNX] vocoder.onnx providers → ['CPUExecutionProvider']
+02:44:15 [INFO] kaeri_live.adapters.tts.supertonic: Supertonic 로드: voice=M1, lang=ko
+02:44:15 [INFO] kaeri_live.main: TTS 어댑터 준비됨 (provider=supertonic)
+02:44:15 [ERROR] kaeri_live.adapters.wakeword.exaone: EXAONE 로드 실패: No module named 'mlx_lm'
+Traceback (most recent call last):
+  File "/home/jya03/project/padongi_08_20-main/padongi/src/kaeri_live/adapters/wakeword/exaone.py", line 70, in preload
+    self.model, self.tokenizer = await asyncio.to_thread(_load_sync)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jya03/project/padongi_08_20-main/padongi/src/kaeri_live/adapters/wakeword/exaone.py", line 61, in _load_sync
+    from mlx_lm import load
+ModuleNotFoundError: No module named 'mlx_lm'
+02:44:15 [WARNING] kaeri_live.main: Wakeword 어댑터 preload 실패 (계속 진행): EXAONE 로드 실패: No module named 'mlx_lm'
+02:44:16 [INFO] kaeri_live.tts.service: Greeting cached: ko (178220 bytes)
+02:44:17 [INFO] kaeri_live.tts.service: Greeting cached: en (165932 bytes)
+02:44:17 [INFO] kaeri_live.main: KAERI LiveSummary 부팅 완료 (port=8001)
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
