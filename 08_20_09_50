@@ -1,29 +1,51 @@
-jya03@jya03:~/project/agent_cad_260820 % npm run electron:dev
+둘 다 간단해.
 
-> cad-ai-studio@0.0.0 electron:dev
-> concurrently "npm run dev" "wait-on http://localhost:5174 && NODE_ENV=development electron ."
+## 1. `git pull` 추적 설정
 
-sh: 1: concurrently: not found
-jya03@jya03:~/project/agent_cad_260820 % npm install
-npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
-npm warn deprecated rimraf@2.6.3: Rimraf versions prior to v4 are no longer supported
-npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-npm warn deprecated boolean@3.2.0: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
-npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-npm warn deprecated three-mesh-bvh@0.7.8: Deprecated due to three.js version incompatibility. Please use v0.8.0, instead.
+`git init` + `fetch`로 만들었으니 upstream이 없어. 한 번만:
 
-added 616 packages, and audited 617 packages in 17s
+```bash
+git branch --set-upstream-to=origin/master master
+```
 
-93 packages are looking for funding
-  run `npm fund` for details
+이제부터 `git pull`만으로 돼. (설정 안 하고 매번 `git pull origin master` 해도 무관)
 
-31 vulnerabilities (1 low, 6 moderate, 21 high, 3 critical)
+## 2. `concurrently: not found` → 설치를 아직 안 했어
 
-To address issues that do not require attention, run:
-  npm audit fix
+`concurrently`, `wait-on`, `electron`은 전부 `node_modules`에 들어가는 devDependency야. 먼저:
 
-To address all issues (including breaking changes), run:
-  npm audit fix --force
+```bash
+npm install
+```
 
-Run `npm audit` for details.
-jya03@jya03:~/project/agent_cad_260820 % 
+끝나면:
+
+```bash
+npm run electron:dev
+```
+
+`.env.local`도 아직 없으면 같이 만들어둬:
+
+```bash
+printf 'VITE_GOOGLE_API_KEY=키\nVITE_GOOGLE_API_KEY_2=키\n' > .env.local
+```
+
+## Linux/WSL이면 참고
+
+프롬프트가 리눅스처럼 보이는데, Electron 창은 디스플레이가 있어야 떠. 창이 안 뜨거나 `libgtk`, `libnss3` 같은 오류가 나면 브라우저로 쓰는 게 빨라:
+
+```bash
+npm run dev
+```
+
+→ http://localhost:5174/editor
+
+기능 차이는 이 정도야:
+
+| | 브라우저 | Electron |
+|---|---|---|
+| 모델 생성·@수정·그룹 편집·STL/GLTF/STEP 내보내기 | ✅ | ✅ |
+| 음성 입력 | ✅ (진짜 실시간) | ✅ (≈2초 간격) |
+| 평가용 STL/JSON 자동 파일 저장, FreeCAD(.FCStd) 열기 | ❌ | ✅ |
+
+WSL에서 Electron을 꼭 띄워야 하면 WSLg(윈도우 11)나 X 서버가 필요하고, 컨테이너 환경에서 `sandbox` 오류가 나면 `NODE_ENV=development ./node_modules/.bin/electron . --no-sandbox`로 우회할 수 있어.
