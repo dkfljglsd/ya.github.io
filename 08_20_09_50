@@ -1,55 +1,28 @@
-ZIP은 `.git`이 없어서 `git pull`이 안 돼. 실행은 똑같고, 업데이트 방법만 달라.
+jya03@jya03:~/project/agent_cad_260820 % git init -q && git remote add origin https://github.com/dkfljglsd/agent_cad_260820.git && git fetch origin && git reset --hard origin/master
+remote: Enumerating objects: 1026, done.
+remote: Counting objects: 100% (1026/1026), done.
+remote: Compressing objects: 100% (744/744), done.
+remote: Total 1026 (delta 222), reused 1026 (delta 222), pack-reused 0 (from 0)
+Receiving objects: 100% (1026/1026), 12.65 MiB | 19.80 MiB/s, done.
+Resolving deltas: 100% (222/222), done.
+From https://github.com/dkfljglsd/agent_cad_260820
+ * [new branch]      master     -> origin/master
+HEAD is now at 35fb09a 일회용 발표자료 생성 스크립트 제거
+jya03@jya03:~/project/agent_cad_260820 % git pull
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details.
 
-## 실행
+    git pull <remote> <branch>
 
-압축 풀고 그 폴더로 들어가:
+If you wish to set tracking information for this branch you can do so with:
 
-```bash
-cd ~/Downloads/agent_cad_260820-master
-```
+    git branch --set-upstream-to=origin/<branch> master
 
-(GitHub ZIP은 폴더명이 `저장소명-브랜치명`이라 `-master`가 붙어)
+jya03@jya03:~/project/agent_cad_260820 % npm run electron:dev
 
-```bash
-npm install
-```
+> cad-ai-studio@0.0.0 electron:dev
+> concurrently "npm run dev" "wait-on http://localhost:5174 && NODE_ENV=development electron ."
 
-키 파일 만들기 (저장소에 없어서 필수):
-
-```bash
-printf 'VITE_GOOGLE_API_KEY=구글AI스튜디오_키\nVITE_GOOGLE_API_KEY_2=구글AI스튜디오_키\n' > .env.local
-```
-
-실행:
-
-```bash
-npm run dev
-```
-
-→ http://localhost:5174/editor
-
-Electron 앱으로:
-
-```bash
-npm run electron:dev
-```
-
-## 앞으로 업데이트 받으려면
-
-ZIP 폴더를 git 저장소로 바꿔두면 다음부터 `git pull`로 받을 수 있어. 그 폴더 안에서:
-
-```bash
-git init -q && git remote add origin https://github.com/dkfljglsd/agent_cad_260820.git && git fetch origin && git reset --hard origin/master
-```
-
-`reset --hard`는 ZIP 파일들을 원격 내용으로 맞추는 거야. `.env.local`은 `.gitignore`에 있어서 지워지지 않고 그대로 남아. 이후로는:
-
-```bash
-git pull
-```
-
-처음부터 다시 하는 게 편하면 그냥 clone하고 `.env.local`만 새 폴더로 복사해도 돼:
-
-```bash
-git clone https://github.com/dkfljglsd/agent_cad_260820.git
-```
+sh: 1: concurrently: not found
+jya03@jya03:~/project/agent_cad_260820 % 
