@@ -1,54 +1,55 @@
-집 컴에서는 이렇게:
+ZIP은 `.git`이 없어서 `git pull`이 안 돼. 실행은 똑같고, 업데이트 방법만 달라.
+
+## 실행
+
+압축 풀고 그 폴더로 들어가:
+
+```bash
+cd ~/Downloads/agent_cad_260820-master
+```
+
+(GitHub ZIP은 폴더명이 `저장소명-브랜치명`이라 `-master`가 붙어)
+
+```bash
+npm install
+```
+
+키 파일 만들기 (저장소에 없어서 필수):
+
+```bash
+printf 'VITE_GOOGLE_API_KEY=구글AI스튜디오_키\nVITE_GOOGLE_API_KEY_2=구글AI스튜디오_키\n' > .env.local
+```
+
+실행:
+
+```bash
+npm run dev
+```
+
+→ http://localhost:5174/editor
+
+Electron 앱으로:
+
+```bash
+npm run electron:dev
+```
+
+## 앞으로 업데이트 받으려면
+
+ZIP 폴더를 git 저장소로 바꿔두면 다음부터 `git pull`로 받을 수 있어. 그 폴더 안에서:
+
+```bash
+git init -q && git remote add origin https://github.com/dkfljglsd/agent_cad_260820.git && git fetch origin && git reset --hard origin/master
+```
+
+`reset --hard`는 ZIP 파일들을 원격 내용으로 맞추는 거야. `.env.local`은 `.gitignore`에 있어서 지워지지 않고 그대로 남아. 이후로는:
 
 ```bash
 git pull
 ```
 
-클론했으면 `origin`이 이미 잡혀 있고 브랜치는 `master`라서 이 한 줄로 최신(`35fb09a`)까지 따라와. 명시적으로 하려면:
+처음부터 다시 하는 게 편하면 그냥 clone하고 `.env.local`만 새 폴더로 복사해도 돼:
 
 ```bash
-git pull origin master
+git clone https://github.com/dkfljglsd/agent_cad_260820.git
 ```
-
-## 받기 전에 확인하면 좋은 것
-
-```bash
-git remote -v && git status --short && git log --oneline -3
-```
-
-- `git status`에 로컬 수정이 남아 있으면 pull이 거부될 수 있어. 그럴 땐 `git stash` → `git pull` → `git stash pop`
-- 리모트 이름이 `origin`이 아니면(`git remote -v`로 확인) 그 이름을 쓰면 돼
-
-## pull 후에
-
-```bash
-bun install
-```
-
-`package.json`/`package-lock.json`이 바뀐 커밋을 받았을 때만 필요해. 지금 받는 마지막 커밋은 스크립트 삭제뿐이라 사실 안 해도 되지만, 습관적으로 해두면 안전해.
-
-**`.env.local`은 저장소에 없으니 집 컴에도 직접 만들어야 해** (한 번만):
-
-```bash
-printf 'VITE_GOOGLE_API_KEY=키\nVITE_GOOGLE_API_KEY_2=키\n' > .env.local
-```
-
-그리고 실행:
-
-```bash
-bun run dev
-```
-
-→ http://localhost:5174/editor
-
-## 혹시 pull이 거부되면
-
-`fatal: refusing to merge unrelated histories` 나 `non-fast-forward`가 뜨는 경우 — 이 저장소는 첫 푸시 때 무거운 산출물을 걷어내며 히스토리를 다시 쓴 이력이 있어. 집 컴 클론이 그 전 상태면 병합이 안 돼. 로컬에 살릴 작업이 없다면 원격 기준으로 맞추는 게 제일 깔끔해:
-
-```bash
-git fetch origin && git reset --hard origin/master
-```
-
-(이건 로컬 커밋·수정을 버리니, 남길 게 있으면 먼저 `git stash` 또는 `git branch 백업`)
-
-접근 관련해서, SSH로 클론했으면 집 컴에도 GitHub SSH 키가 등록돼 있어야 하고, 저장소가 비공개인데 HTTPS로 받았다면 pull 할 때 토큰(PAT)을 물어봐.
