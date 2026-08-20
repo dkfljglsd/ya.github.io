@@ -1,36 +1,62 @@
-서버는 정상적으로 떴습니다(포트 8001). 다만 **`padongi/.env` 가 없어서 `config.py` 기본값으로 돌고 있습니다.** 근거 세 가지:
+jya03@jya03:~/project/padongi_08_20-main % bash 실행.sh
+파동이 서버 시작... (모델 로딩 수십 초, 종료: Ctrl+C)
+  청중 화면 : http://localhost:8002/
+  관리자    : http://localhost:8002/admin
 
-- 포트가 8001 — `.env` 의 `PORT=8002` 가 아니라 [config.py:115](padongi/src/kaeri_live/shared/config.py:115) 의 기본값
-- 어댑터가 `whisper`/`kaeri_gpt`/`exaone` — 전부 **macOS 전용 MLX** 기본값. 그래서 `mlx_whisper`, `mlx_lm` 없다는 오류 3개가 난 겁니다. `.env` 는 이걸 `faster_whisper`/`mock`/`rule` 로 바꿉니다
-- `실행 모드: REAL` — `.env` 가 적용되면 `MIXED` 로 나옵니다
 
-`Ctrl+C` 로 끄고:
+서버 시작: http://localhost:8002
+관리자 페이지: http://localhost:8002/admin
 
-```bash
-cp padongi/.env.example padongi/.env && sed -i 's/^PIBO_ENABLED=true/PIBO_ENABLED=false/' padongi/.env
-```
-
-```bash
-grep -E "STT_PROVIDER|LLM_PROVIDER|WAKEWORD_PROVIDER|PORT|PIBO_ENABLED" padongi/.env
-```
-
-`faster_whisper` / `mock` / `rule` / `8002` / `false` 가 나오면 됩니다. 그리고 음성인식 모델이 있는지 확인:
-
-```bash
-ls -lh padongi/models/faster-whisper-small/model.bin
-```
-
-없으면(`No such file`) 받으세요 — supertonic은 이미 잘 로드됐으니 이것만 필요합니다:
-
-```bash
-.venv-linux/bin/hf download Systran/faster-whisper-small --local-dir padongi/models/faster-whisper-small
-```
-
-그다음 `bash 실행.sh` → http://localhost:8002/ 입니다.
-
-**로그에서 무해한 것들:**
-
-- `UserWarning: 'CUDAExecutionProvider' is not in available providers` / `providers → ['CPUExecutionProvider']` — 설치된 onnxruntime이 CPU 빌드라 supertonic이 CPU로 폴백한 것입니다. 그 앞의 `Using GPU (CUDA)` 는 supertonic 코드가 시도 전에 찍는 문구라 무시하세요. 음성합성은 실제로 성공했습니다(`Greeting cached: ko (178220 bytes)`).
-- MLX 오류 3개는 `.env` 를 만들면 사라집니다. preload 실패는 `main.py` 의 lifespan이 잡고 부팅을 계속하도록 되어 있어 서버 자체는 살아 있었습니다.
-
-참고로 제가 만든 `.env.example` 에 `PIBO_ENABLED=true` 가 들어가 있는데, 비밀번호는 빈 값이라 그대로 복사하면 로봇 연결만 계속 실패합니다. 기본값을 `false` 로 바꿔서 저장소에 올릴까요? 로봇 쓸 사람만 켜는 쪽이 안전해 보입니다.
+INFO:     Started server process [17194]
+INFO:     Waiting for application startup.
+02:51:54 [INFO] kaeri_live.main: KAERI LiveSummary 시작
+02:51:54 [INFO] kaeri_live.main: ────────────────────────────────────────────────────────────
+02:51:54 [INFO] kaeri_live.main: 실행 모드: MIXED (혼합 — 일부만 mock)
+02:51:54 [INFO] kaeri_live.main: 모드 변경하려면 아래 파일 수정:
+02:51:54 [INFO] kaeri_live.main:   .env       : /home/jya03/project/padongi_08_20-main/padongi/.env
+02:51:54 [INFO] kaeri_live.main:   기본값 정의 : /home/jya03/project/padongi_08_20-main/padongi/src/kaeri_live/shared/config.py
+02:51:54 [INFO] kaeri_live.main: ────────────────────────────────────────────────────────────
+02:51:55 [INFO] kaeri_live.adapters.stt.faster_whisper: faster-whisper 로드 완료: models/faster-whisper-small (device=auto)
+02:51:55 [INFO] kaeri_live.main: STT 어댑터 준비됨 (provider=faster_whisper)
+02:51:55 [INFO] kaeri_live.main: LLM 어댑터 준비됨 (provider=mock)
+Using GPU (CUDA) for inference (CUDA -> CPU fallback enabled)
+/home/jya03/project/padongi_08_20-main/.venv-linux/lib/python3.12/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py:153: UserWarning: Specified provider 'CUDAExecutionProvider' is not in available provider names.Available providers: 'AzureExecutionProvider, CPUExecutionProvider'
+  warnings.warn(
+[ONNX] duration_predictor.onnx providers → ['CPUExecutionProvider']
+[ONNX] text_encoder.onnx providers → ['CPUExecutionProvider']
+[ONNX] vector_estimator.onnx providers → ['CPUExecutionProvider']
+[ONNX] vocoder.onnx providers → ['CPUExecutionProvider']
+02:51:56 [INFO] kaeri_live.adapters.tts.supertonic: Supertonic 로드: voice=M1, lang=ko
+02:51:56 [INFO] kaeri_live.main: TTS 어댑터 준비됨 (provider=supertonic)
+02:51:57 [INFO] kaeri_live.main: Wakeword 어댑터 준비됨 (provider=rule)
+02:51:57 [INFO] kaeri_live.tts.service: Greeting cached: ko (178220 bytes)
+02:51:58 [INFO] kaeri_live.tts.service: Greeting cached: en (165932 bytes)
+02:51:58 [INFO] kaeri_live.main: KAERI LiveSummary 부팅 완료 (port=8002)
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
+INFO:     127.0.0.1:58886 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58886 - "GET /assets/padong.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58886 - "GET /api/greeting/en HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58886 - "GET /assets/kaeri_logo_en.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58886 - "GET /assets/padong_idle.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:52378 - "GET /assets/padong_speaking.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:52392 - "GET /assets/padong_listening_start.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:52400 - "WebSocket /ws/admin" [accepted]
+INFO:     connection open
+02:52:33 [INFO] kaeri_live.transport.admin_ws: /ws/admin 연결됨: 1 clients
+INFO:     127.0.0.1:52406 - "GET /assets/padong_speaking.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:52416 - "GET /assets/padong_idle.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:52408 - "GET /assets/padong_listening_loop.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:52392 - "GET /api/greeting/ko HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52416 - "GET /assets/kaeri_logo_full.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52392 - "GET /assets/padong_speaking.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:52408 - "GET /assets/padong_idle.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:52416 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+^XINFO:     127.0.0.1:52420 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52420 - "GET /assets/padong_idle.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:52434 - "GET /api/greeting/en HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39856 - "WebSocket /ws/admin" [accepted]
+INFO:     connection open
+02:53:13 [INFO] kaeri_live.transport.admin_ws: /ws/admin 연결됨: 2 clients
+INFO:     127.0.0.1:52434 - "GET /api/greeting/ko HTTP/1.1" 200 OK
+02:53:13 [INFO] kaeri_live.transport.admin_ws: /ws/admin 해제됨: 1 clients
