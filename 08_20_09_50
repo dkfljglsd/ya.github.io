@@ -1,54 +1,54 @@
-ZIP 폴더를 버리고 다시 받을 필요 없습니다. **그 폴더를 그대로 git 저장소로 바꿔치기**하는 게 가장 깔끔합니다. `.env` 와 모델 700MB는 `.gitignore` 에 있어서 git이 건드리지 않으니 그대로 살아남습니다.
-
-## 1. 먼저 GitHub 인증 (비공개 저장소라 필요)
-
-그 Linux에서 SSH 키를 만들고 공개키를 GitHub에 등록하세요:
-
-```bash
-ssh-keygen -t ed25519 -C "jya03@linux" -N "" -f ~/.ssh/id_ed25519 && cat ~/.ssh/id_ed25519.pub
-```
-
-출력된 `ssh-ed25519 AAAA...` 한 줄을 복사 → GitHub 웹 → 우측 상단 프로필 → **Settings → SSH and GPG keys → New SSH key** 에 붙여넣고 저장. (계정 설정이라 직접 하셔야 합니다.) 확인:
-
-```bash
-ssh -T git@github.com
-```
-
-`Hi dkfljglsd!` 가 나오면 됩니다.
-
-## 2. ZIP 폴더를 git 저장소로 전환
-
-```bash
-cd ~/project/padongi_08_20-main
-```
-
-```bash
-git init -b main && git remote add origin git@github.com:dkfljglsd/padongi_08_20.git && git fetch origin && git reset --hard origin/main && git branch --set-upstream-to=origin/main main
-```
-
-`git reset --hard` 는 **추적 대상 파일만** 저장소 상태로 맞춥니다. `padongi/.env`, `padongi/models/`, `supertonic/assets/onnx/`, `.venv-linux/` 는 무시 목록에 있어 손대지 않습니다. 즉 `main.html` 만 최신으로 갱신됩니다.
-
-확인:
-
-```bash
-git log --oneline -3 && git status --short && du -sh padongi/models
-```
-
-`445a983` 가 보이고, `status` 가 비어 있고, `464M` 이 그대로면 성공입니다.
-
-## 3. 이후 업데이트
+집 컴에서는 이렇게:
 
 ```bash
 git pull
 ```
 
-이제 제가 저장소에 올릴 때마다 이 한 줄로 받으면 됩니다. 브라우저 새로고침만 하면 템플릿 변경은 즉시 반영되고, 파이썬 코드가 바뀌면 서버만 재시작하세요.
+클론했으면 `origin`이 이미 잡혀 있고 브랜치는 `master`라서 이 한 줄로 최신(`35fb09a`)까지 따라와. 명시적으로 하려면:
 
----
+```bash
+git pull origin master
+```
 
-**주의할 점 두 가지:**
+## 받기 전에 확인하면 좋은 것
 
-- 로컬에서 파일을 직접 고쳤다면 `git reset --hard` 가 그 수정을 버립니다. 지금은 `.env` 밖에 안 고치셨을 테니(그건 무시 대상) 안전합니다. 혹시 다른 걸 고쳤다면 먼저 `git stash` 로 빼두세요.
-- 폴더 이름은 `padongi_08_20-main` 으로 남습니다. 신경 쓰이면 `cd .. && mv padongi_08_20-main padongi_08_20` 로 바꿔도 되고, `.venv-linux` 안의 `hf`·`uvicorn` 같은 명령은 경로가 박혀 있어서 폴더명을 바꾸면 깨집니다 — 그때는 `.venv-linux` 를 지우고 `bash 실행.sh` 로 다시 만들면 됩니다.
+```bash
+git remote -v && git status --short && git log --oneline -3
+```
 
-`ssh -T` 나 `git fetch` 에서 막히면 그 출력을 알려주세요. 회사 방화벽이 22번 포트를 막는 경우도 있는데, 그러면 HTTPS + 토큰 방식으로 우회하는 방법을 안내하겠습니다.
+- `git status`에 로컬 수정이 남아 있으면 pull이 거부될 수 있어. 그럴 땐 `git stash` → `git pull` → `git stash pop`
+- 리모트 이름이 `origin`이 아니면(`git remote -v`로 확인) 그 이름을 쓰면 돼
+
+## pull 후에
+
+```bash
+bun install
+```
+
+`package.json`/`package-lock.json`이 바뀐 커밋을 받았을 때만 필요해. 지금 받는 마지막 커밋은 스크립트 삭제뿐이라 사실 안 해도 되지만, 습관적으로 해두면 안전해.
+
+**`.env.local`은 저장소에 없으니 집 컴에도 직접 만들어야 해** (한 번만):
+
+```bash
+printf 'VITE_GOOGLE_API_KEY=키\nVITE_GOOGLE_API_KEY_2=키\n' > .env.local
+```
+
+그리고 실행:
+
+```bash
+bun run dev
+```
+
+→ http://localhost:5174/editor
+
+## 혹시 pull이 거부되면
+
+`fatal: refusing to merge unrelated histories` 나 `non-fast-forward`가 뜨는 경우 — 이 저장소는 첫 푸시 때 무거운 산출물을 걷어내며 히스토리를 다시 쓴 이력이 있어. 집 컴 클론이 그 전 상태면 병합이 안 돼. 로컬에 살릴 작업이 없다면 원격 기준으로 맞추는 게 제일 깔끔해:
+
+```bash
+git fetch origin && git reset --hard origin/master
+```
+
+(이건 로컬 커밋·수정을 버리니, 남길 게 있으면 먼저 `git stash` 또는 `git branch 백업`)
+
+접근 관련해서, SSH로 클론했으면 집 컴에도 GitHub SSH 키가 등록돼 있어야 하고, 저장소가 비공개인데 HTTPS로 받았다면 pull 할 때 토큰(PAT)을 물어봐.
