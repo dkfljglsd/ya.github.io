@@ -1,16 +1,1 @@
-jya03@jya03:~/project/agent_cad_260820 % npm run electron:dev
-
-> cad-ai-studio@0.0.0 electron:dev
-> concurrently "npm run dev" "wait-on http://localhost:5174 && NODE_ENV=development electron ."
-
-[0] 
-[0] > cad-ai-studio@0.0.0 dev
-[0] > vite
-[0] 
-[0] 
-[0]   VITE v5.4.21  ready in 231 ms
-[0] 
-[0]   ➜  Local:   http://localhost:5174/
-[0]   ➜  Network: use --host to expose
-[1] /home/jya03/project/agent_cad_260820/node_modules/electron/dist/electron: error while loading shared libraries: libglib-2.0.so.0: cannot open shared object file: No such file or directory
-[1] wait-on http://localhost:5174 && NODE_ENV=development electron . exited with code 127
+sudo apt update && sudo apt install -y libglib2.0-0 libgtk-3-0 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libgbm1 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libpango-1.0-0 libcairo2 libx11-xcb1 libasound2t64
