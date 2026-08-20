@@ -1,28 +1,29 @@
-jya03@jya03:~/project/agent_cad_260820 % git init -q && git remote add origin https://github.com/dkfljglsd/agent_cad_260820.git && git fetch origin && git reset --hard origin/master
-remote: Enumerating objects: 1026, done.
-remote: Counting objects: 100% (1026/1026), done.
-remote: Compressing objects: 100% (744/744), done.
-remote: Total 1026 (delta 222), reused 1026 (delta 222), pack-reused 0 (from 0)
-Receiving objects: 100% (1026/1026), 12.65 MiB | 19.80 MiB/s, done.
-Resolving deltas: 100% (222/222), done.
-From https://github.com/dkfljglsd/agent_cad_260820
- * [new branch]      master     -> origin/master
-HEAD is now at 35fb09a 일회용 발표자료 생성 스크립트 제거
-jya03@jya03:~/project/agent_cad_260820 % git pull
-There is no tracking information for the current branch.
-Please specify which branch you want to merge with.
-See git-pull(1) for details.
-
-    git pull <remote> <branch>
-
-If you wish to set tracking information for this branch you can do so with:
-
-    git branch --set-upstream-to=origin/<branch> master
-
 jya03@jya03:~/project/agent_cad_260820 % npm run electron:dev
 
 > cad-ai-studio@0.0.0 electron:dev
 > concurrently "npm run dev" "wait-on http://localhost:5174 && NODE_ENV=development electron ."
 
 sh: 1: concurrently: not found
+jya03@jya03:~/project/agent_cad_260820 % npm install
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm warn deprecated rimraf@2.6.3: Rimraf versions prior to v4 are no longer supported
+npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated boolean@3.2.0: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated three-mesh-bvh@0.7.8: Deprecated due to three.js version incompatibility. Please use v0.8.0, instead.
+
+added 616 packages, and audited 617 packages in 17s
+
+93 packages are looking for funding
+  run `npm fund` for details
+
+31 vulnerabilities (1 low, 6 moderate, 21 high, 3 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
 jya03@jya03:~/project/agent_cad_260820 % 
