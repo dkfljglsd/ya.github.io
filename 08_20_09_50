@@ -1,1 +1,36 @@
-nano ~/project/padongi_2026_08_19-main/app/.env
+출처를 확인했습니다. 로컬 `config.json`의 `"model_name": "Supertonic 2"` 와 `tts.json`의 `"tts_version": "v1.6.0", "split": "opensource-multilingual"` 이 HuggingFace [Supertone/supertonic-2](https://huggingface.co/Supertone/supertonic-2) 와 일치하고, 파일 6개(`duration_predictor`, `text_encoder`, `vector_estimator`, `vocoder`, `tts.json`, `unicode_indexer.json`)와 `voice_styles/M1~M5·F1~F5` 구성도 그대로 맞습니다. 음성인식은 [Systran/faster-whisper-small](https://huggingface.co/Systran/faster-whisper-small) 로 파일 목록(`model.bin`, `tokenizer.json`, `vocabulary.txt`, `config.json`)이 일치합니다. 둘 다 gated가 아니라 로그인·토큰 없이 받을 수 있습니다.
+
+Linux에서 저장소를 클론한 폴더에서 실행하세요. `실행.sh`를 한 번 돌려 `.venv-linux` 가 만들어져 있으면 `hf` 명령이 그 안에 있습니다.
+
+**1) 음성합성 (supertonic-2, 약 251MB)**
+
+```bash
+.venv-linux/bin/hf download Supertone/supertonic-2 --local-dir padongi/supertonic/assets
+```
+
+HF 저장소 루트가 로컬의 `supertonic/assets/` 에 대응합니다. `onnx/` 와 `voice_styles/` 가 그 아래로 들어가면 정상입니다(`voice_styles`는 이미 저장소에 있어서 같은 내용으로 덮어써집니다). `onnx/` 만 받으려면 `--include "onnx/*"` 를 붙이세요.
+
+**2) 음성인식 (faster-whisper-small, 약 484MB)**
+
+```bash
+.venv-linux/bin/hf download Systran/faster-whisper-small --local-dir padongi/models/faster-whisper-small
+```
+
+이렇게 받으면 `padongi/.env` 의 `FASTER_WHISPER_MODEL=models/faster-whisper-small` 을 그대로 쓸 수 있습니다.
+
+**3) 확인 후 실행**
+
+```bash
+du -sh padongi/models padongi/supertonic/assets/onnx && bash 실행.sh
+```
+
+`464M`, `251M` 이 나오면 됩니다. 이후 실행은 오프라인으로 됩니다(`실행.sh`가 `HF_HUB_OFFLINE=1`).
+
+알아둘 점 몇 가지:
+
+- **`hf` 가 없다는 오류가 나면** huggingface_hub 버전 차이입니다. 구버전은 `huggingface-cli download ...` 이고, 아예 없으면 `.venv-linux/bin/pip install -U "huggingface_hub[cli]"` 로 설치하세요.
+- **다운로드 없이 앱이 알아서 받게 하려면**: `.env` 에서 `FASTER_WHISPER_MODEL=small` 로 바꾸고 `HF_HUB_OFFLINE=0 bash 실행.sh` — `~/.cache/huggingface` 에 캐시됩니다. 단 supertonic은 이 경로가 없어 위 1번이 필수입니다.
+- **내부망 등 인터넷이 막힌 Linux면 이 방법 전체가 불가**합니다. 그때는 앞서 안내한 rsync나 USB(tar) 방식으로 이 Mac에서 옮기세요.
+- 라이선스는 faster-whisper-small이 MIT, supertonic-2는 OpenRAIL입니다. 배포·재공개 시에는 OpenRAIL 사용 제한 조항을 확인하세요.
+
+Sources: [Supertone/supertonic-2](https://huggingface.co/Supertone/supertonic-2), [Systran/faster-whisper-small](https://huggingface.co/Systran/faster-whisper-small), [supertone-inc/supertonic (GitHub)](https://github.com/supertone-inc/supertonic)
